@@ -6,39 +6,32 @@ class Site {
     }
 
     addBoard(board) {
-        for (const obj of this.boards) {
-            if (obj.name == board.name) {
-                throw new boardDupNameError();
-            }
-        }
-        board.enable = true;
+        if ([...this.boards.map(x => x.name)].includes(board.name)) throw new boardDupNameError();
+        board.attached = true;
         this.boards.push(board);
-
         return true;
     }
 
     findBoardByName(name) {
-        for (const obj of this.boards) {
-            if (obj.name == name) return obj;
-        }
+        return this.boards.find((x) => x.name === name)
     }
 }
 
 class Board {
     static article_id_idx = 0;
     constructor(name) {
-        if (name == '') throw new emptyStringError();
-        if (name == null) throw new nullStringError();
+        if (name === '') throw new emptyStringError();
+        if (name === null) throw new nullStringError();
         this.name = name;
-        this.enable = false;
+        this.attached = false;
         this.articles = [];
     }
 
     publish(article) {
-        if (this.enable == false) throw new boardNotEnableError();
+        if (this.attached === false) throw new boardNotAttachedError();
         article.id.id_name = `${this.name}-${Board.article_id_idx}`;
         article.createdDate = new Date().toISOString();
-        article.enable = true;
+        article.attached = true;
         Board.article_id_idx++;
 
         this.articles.push(article);
@@ -51,12 +44,12 @@ class Board {
 
 class Article {
     constructor(article) {
-        if (article.subject == '') throw new emptyStringError();
-        if (article.subject == null) throw new nullStringError();
-        if (article.content == '') throw new emptyStringError();
-        if (article.content == null) throw new nullStringError();
-        if (article.author == '') throw new emptyStringError();
-        if (article.author == null) throw new nullStringError();
+        if (article.subject === '') throw new emptyStringError();
+        if (article.subject === null) throw new nullStringError();
+        if (article.content === '') throw new emptyStringError();
+        if (article.content === null) throw new nullStringError();
+        if (article.author === '') throw new emptyStringError();
+        if (article.author === null) throw new nullStringError();
 
 
         this.subject = article.subject;
@@ -70,12 +63,12 @@ class Article {
             }
         };
         this.date = '';
-        this.enable = false;
+        this.attached = false;
         this.comments = [];
     }
 
     reply(comment) {
-        if (!this.enable) throw new articleNotEnableError();
+        if (!this.attached) throw new articleNotAttachedError();
         comment.createdDate = new Date().toISOString();
         this.comments.push(comment);
 
@@ -90,10 +83,10 @@ class Article {
 
 class Comment {
     constructor(comment) {
-        if (comment.content == '') throw new emptyStringError();
-        if (comment.content == null) throw new nullStringError();
-        if (comment.author == '') throw new emptyStringError();
-        if (comment.content == null) throw new nullStringError();
+        if (comment.content === '') throw new emptyStringError();
+        if (comment.content === null) throw new nullStringError();
+        if (comment.author === '') throw new emptyStringError();
+        if (comment.content === null) throw new nullStringError();
         this.content = comment.content;
         this.author = comment.author;
     }
